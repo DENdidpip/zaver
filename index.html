@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delivery Route Game</title>
+<style>
+  body { margin:0; font-family:sans-serif; background:#f0f0f0; }
+  #board { position:relative; width:800px; height:400px; margin:20px auto; background:#fff; border:1px solid #ccc; border-radius:8px; }
+  .piece { position:absolute; width:64px; height:64px; cursor:pointer; user-select:none; display:flex; align-items:center; justify-content:center; }
+  .tool { display:inline-block; width:64px; height:64px; margin:4px; border:1px dashed #666; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  #palette { text-align:center; margin-bottom:12px; }
+  #hud { text-align:center; margin:12px; }
+  button { padding:6px 10px; margin:2px; cursor:pointer; }
+</style>
+</head>
+<body>
+<div id="palette">
+  <div class="tool" data-type="straight">―</div>
+  <div class="tool" data-type="elbow">└</div>
+  <div class="tool" data-type="t">┬</div>
+  <div class="tool" data-type="start">S</div>
+  <div class="tool" data-type="end">E</div>
+</div>
+<div id="hud">
+  <button id="startBtn">Старт</button>
+  <button id="resetBtn">Сброс</button>
+  <span>Время: <span id="timer">0.00</span>s</span>
+</div>
+<div id="board"></div>
+<script>
+const board = document.getElementById('board');
+const palette = document.getElementById('palette');
+const startBtn = document.getElementById('startBtn');
+const resetBtn = document.getElementById('resetBtn');
+const timerEl = document.getElementById('timer');
+let pieces = [];
+let timerInterval = null;
+let startTime = 0;
+let movingDot = null;
+
+function addPiece(type, x, y, rot=0){
+  const el = document.createElement('div');
+  el.className='piece';
+  el.dataset.type = type;
+  el.dataset.rot = rot;
+  el.style.left = x+'px';
+  el.style.top = y+'px';
+  el.textContent = type==='straight'?'―':type==='elbow'?'└':type==='t'?'┬':type==='start'?'S':'E';
+  el.style.transform = `rotate(${rot}deg)`;
+  enableDrag(el);
+  el.addEventListener('dblclick', ()=>{
+    let r = (parseInt(el.dataset.rot)+90)%360;
+    el.dataset.rot=r;
+    el.style.transform=`rotate(${r}deg)`;
+  });
+  board.appendChild(el);
+  pieces.push(el);
+  return el;
+}
+
+function enableDrag(el){
+  let offsetX=0, offsetY=0, dragging=false;
+  el.addEventListener('pointerdown', e=>{
+    dragging=true;
+    offsetX = e.clientX - el.offsetLeft;
+    offsetY = e.clientY - el.offsetTop;
+    el.setPointerCapture(e.pointerId);
+  });
+  el.addEventListener('pointermove', e=>{
+    if(!dragging) return;
+    el.style.left = (e.clientX - offsetX)+'px';
+    el.style.top = (e.clientY - offsetY)+'px';
+  });
+  el.addEventListener('pointerup', e=>{
+    dragging=false;
+    el.releasePointerCapture(e.pointerId);
+  });
+}
+
+palette.querySelectorAll('.tool').forEach(t=>{
+  t.addEventListener('click', ()=>{
+    addPiece(t.dataset.type, 50,50);
+  });
+});
+
+function startTimer(){ startTime = performance.now();
+  timerInterval = setInterval(()=>{
+    const t=(performance.now()-startTime)/1000;
+    timerEl.textContent=t.toFixed(2);
+  },50);
+}
+function stopTimer(){ clearInterval(timerInterval); timerInterval=null; }
+
+function startDelivery(){
+  if(movingDot) movingDot.remove();
+  const startEl = pieces.find(p=>p.dataset.type==='start');
+  const endEl = pieces.find(p=>p.dataset.type==='end');
+  if(!startEl || !endEl){ alert('Добавьте Start и End!'); return; }
+  const dot = document.createElement('div');
+  dot.style.position='absolute';
+  dot.style.width='16px';
+  dot.style.height='16px';
+  dot.style.borderRadius='50%';
+  dot.style.background='red';
+  board.appendChild(dot);
+  movingDot = dot;
+  let x=parseInt(startEl.style.left)+24;
+  let y=parseInt(startEl.style.top)+24;
+  dot.style.left=x+'px';
+  dot.style.top=y+'px';
+  startTimer();
+  const dx=(parseInt(endEl.style.left)-x)/200;
+  const dy=(parseInt(endEl.style.top)-y)/200;
+  let steps=0;
+  function move(){
+    if(steps>=200){ stopTimer(); alert('Доставка завершена!'); return; }
+    x+=dx; y+=dy; steps++; dot.style.left=x+'px'; dot.style.top=y+'px';
+    requestAnimationFrame(move);
+  }
+  move();
+}
+
+startBtn.addEventListener('click', startDelivery);
+resetBtn.addEventListener('click', ()=>{
+  pieces.forEach(p=>p.remove()); pieces=[];
+  if(movingDot){ movingDot.remove(); movingDot=null; }
+  stopTimer(); timerEl.textContent='0.00';
+});
+</script>
+</body>
+</html>

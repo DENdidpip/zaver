@@ -1,0 +1,18 @@
+{
+    "levels": [
+        {
+        "levelId": 1,
+        "name": "Square",
+        "silhouette": [ {"x":200,"y":200},{"x":400,"y":200},{"x":400,"y":400},{"x":200,"y":400} ],
+        "pieces": [
+            {"type":"triangle","points":[{"x":50,"y":50},{"x":150,"y":50},{"x":50,"y":150}],"color":"#e74c3c"},
+            {"type":"triangle","points":[{"x":150,"y":50},{"x":150,"y":150},{"x":50,"y":150}],"color":"#3498db"},
+            {"type":"triangle","points":[{"x":50,"y":150},{"x":150,"y":150},{"x":100,"y":200}],"color":"#2ecc71"},
+            {"type":"triangle","points":[{"x":150,"y":150},{"x":200,"y":150},{"x":150,"y":200}],"color":"#f39c12"},
+            {"type":"square","points":[{"x":100,"y":100},{"x":150,"y":100},{"x":150,"y":150},{"x":100,"y":150}],"color":"#9b59b6"},
+            {"type":"parallelogram","points":[{"x":50,"y":50},{"x":100,"y":50},{"x":150,"y":100},{"x":100,"y":100}],"color":"#ff7ab6"},
+            {"type":"triangle","points":[{"x":150,"y":50},{"x":200,"y":50},{"x":150,"y":100}],"color":"#1abc9c"}
+        ]
+        }
+    ]
+}

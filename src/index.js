@@ -78,7 +78,98 @@ let originalLevel = null;
 
 function deepClone(obj) { return JSON.parse(JSON.stringify(obj)); }
 
-// Recompute list of points that lie outside the silhouette (vertices and edge midpoints)
+// Check for win condition
+function checkWinCondition() {
+  console.log('Проверяем условие выигрыша...'); // Отладка
+  
+  // Получаем допуск из поля ввода
+  const toleranceInput = document.getElementById('tolerance');
+  const tolerance = toleranceInput ? parseInt(toleranceInput.value) || 1000 : 1000;
+  
+  // Сначала проверяем, что все фигуры находятся внутри или на границе силуэта
+  let allPiecesInSilhouette = true;
+  for (let piece of pieces) {
+    for (let point of piece.points) {
+      if (!pointInOrOnPoly(point.x, point.y, silhouette)) {
+        allPiecesInSilhouette = false;
+        break;
+      }
+    }
+    if (!allPiecesInSilhouette) break;
+  }
+  
+  if (!allPiecesInSilhouette) {
+    document.getElementById('message').textContent = '⚠️ Некоторые фигуры находятся вне силуэта';
+    return false;
+  }
+  
+  const result = computeCoverageAndOverlap(true); // strict check
+  
+  console.log('Результат проверки:', result); // Отладка
+  console.log('Незакрашенных пикселей:', result.uncovered);
+  console.log('Перекрывающихся пикселей:', result.overlap);
+  console.log('Допуск:', tolerance); // Отладка
+  
+  // Условие победы с допуском
+  if (result.uncovered < tolerance && result.overlap < tolerance) {
+    console.log('ПОБЕДА ОБНАРУЖЕНА с допуском!'); // Отладка
+    showWinMessage();
+    return true;
+  }
+  
+  // Показываем прогресс с учетом допуска
+  if (result.uncovered >= tolerance) {
+    const remaining = result.uncovered - tolerance + 1;
+    document.getElementById('message').textContent = `Осталось заполнить: ${remaining} пикселей (допуск: ${tolerance})`;
+  } else if (result.overlap >= tolerance) {
+    const excess = result.overlap - tolerance + 1;
+    document.getElementById('message').textContent = `⚠️ Слишком много перекрытий: ${excess} лишних пикселей (допуск: ${tolerance})`;
+  } else {
+    // Если мы здесь, значит одно условие выполнено, а другое почти
+    let message = 'Почти готово! ';
+    if (result.uncovered > 0) {
+      message += `Незакрашено: ${result.uncovered} пикселей (норма). `;
+    }
+    if (result.overlap > 0) {
+      message += `Перекрытий: ${result.overlap} пикселей (норма).`;
+    }
+    document.getElementById('message').textContent = message;
+  }
+  
+  return false;
+}
+
+// Show win message with animation
+function showWinMessage() {
+  const messageEl = document.getElementById('message');
+  messageEl.innerHTML = '🎉 <span style="color: #2ecc71; font-size: 24px; font-weight: bold;">ПОБЕДА!</span> 🎉<br><span style="color: #333;">Вы успешно собрали танграм!</span>';
+  
+  // Add celebration animation
+  messageEl.style.animation = 'none';
+  setTimeout(() => {
+    messageEl.style.animation = 'winPulse 2s ease-in-out infinite';
+  }, 10);
+  
+  // Clear overlay and bad points
+  badPoints = [];
+  coverageOverlay = null;
+  
+  // Optional: добавляем конфетти или другие эффекты
+  celebrateWin();
+}
+
+// Simple celebration effect
+function celebrateWin() {
+  // Change canvas border to indicate victory
+  canvas.style.border = '5px solid #2ecc71';
+  canvas.style.boxShadow = '0 0 20px rgba(46, 204, 113, 0.5)';
+  
+  // Reset after a few seconds
+  setTimeout(() => {
+    canvas.style.border = '';
+    canvas.style.boxShadow = '';
+  }, 5000);
+}
 function updateBadPoints() {
   badPoints = [];
   if (!silhouette) return;
@@ -130,7 +221,27 @@ class Piece {
     return ctx.isPointInPath(x, y);
   }
 
-  move(dx, dy) { for (let p of this.points) { p.x += dx; p.y += dy; } }
+  move(dx, dy) { 
+    // Сохраняем исходные позиции
+    const originalPoints = this.points.map(p => ({x: p.x, y: p.y}));
+    
+    // Пробуем переместить
+    for (let p of this.points) { 
+      p.x += dx; 
+      p.y += dy; 
+    }
+    
+    // Проверяем коллизии с другими фигурами
+    for (let otherPiece of pieces) {
+      if (otherPiece !== this && piecesOverlap(this, otherPiece)) {
+        // Отменяем перемещение, возвращаем исходные позиции
+        this.points = originalPoints;
+        return false; // Перемещение заблокировано
+      }
+    }
+    
+    return true; // Перемещение успешно
+  }
 
   rotate(angle) {
     const c = this.center();
@@ -470,6 +581,9 @@ canvas.addEventListener('pointermove', e => {
   lastPointer = {x, y};
   updateBadPoints();
   drawAll();
+  
+  // Убираем автоматическую проверку выигрыша во время перетаскивания
+  // checkWinCondition();
 });
 
 canvas.addEventListener('pointerup', e => {
@@ -482,6 +596,11 @@ canvas.addEventListener('pointerup', e => {
   coverageOverlay = resQuick.overlay;
   updateBadPoints();
   drawAll();
+  
+  // Убираем автоматическую проверку выигрыша при окончании перетаскивания
+  // if (checkWinCondition()) {
+  //   return; // Если победа, не выполняем дальнейшие проверки
+  // }
 
   const myVersion = _stateVersion;
   if (_bgJob) {
@@ -540,6 +659,13 @@ canvas.addEventListener('contextmenu', e => {
     if (p.isInside(x, y)) {
       p.rotate(45);
       updateBadPoints();
+      drawAll();
+      
+      // Убираем автоматическую проверку выигрыша
+      // if (checkWinCondition()) {
+      //   return;
+      // }
+      
       // async coverage check via worker when available
       workerCheckAsync(false).then(sr => {
         coverageOverlay = sr.overlay ? bufferToCanvas(sr.width, sr.height, sr.overlay) : null;
@@ -559,6 +685,13 @@ canvas.addEventListener('dblclick', e => {
     if (p.isInside(x, y)) {
       p.rotate(90);
       updateBadPoints();
+      drawAll();
+      
+      // Убираем автоматическую проверку выигрыша
+      // if (checkWinCondition()) {
+      //   return;
+      // }
+      
       workerCheckAsync(false).then(sr => {
         coverageOverlay = sr.overlay ? bufferToCanvas(sr.width, sr.height, sr.overlay) : null;
         drawAll();
@@ -591,12 +724,7 @@ fetch('level1.json').then(r => r.json()).then(level => {
   originalLevel = deepClone(level);
   normalizeLevel(level);
   pieces = level.pieces.map(p => new Piece(p.points, p.color));
-  for (let p of pieces) {
-    let tries = 0;
-    while (p.points.every(pt => pointInOrOnPoly(pt.x, pt.y, silhouette)) && tries++ < 50) {
-      p.move(120, 0);
-    }
-  }
+  arrangePiecesInRow();
   drawAll();
 }).catch(err => {
   console.warn('Failed to load level1.json, using fallback level:', err);
@@ -610,10 +738,7 @@ fetch('level1.json').then(r => r.json()).then(level => {
   if (location && location.protocol === 'file:') {
     msgEl.textContent += ' (Файлы открыты через file:// — браузер блокирует fetch. Для загрузки уровня запустите локальный HTTP-сервер, например: `python -m http.server` и откройте http://localhost:8000/)';
   }
-  for (let p of pieces) {
-    let tries = 0;
-    while (p.points.every(pt => pointInOrOnPoly(pt.x, pt.y, silhouette)) && tries++ < 50) p.move(120, 0);
-  }
+  arrangePiecesInRow();
   drawAll();
 });
 
@@ -639,6 +764,83 @@ function getBBox(points) {
   const minx = Math.min(...xs), maxx = Math.max(...xs);
   const miny = Math.min(...ys), maxy = Math.max(...ys);
   return {minx, miny, maxx, maxy, width: maxx - minx, height: maxy - miny};
+}
+
+// Get bounding box of a piece
+function getPieceBBox(piece) {
+  return getBBox(piece.points);
+}
+
+// Check if two pieces overlap
+function piecesOverlap(piece1, piece2) {
+  const bbox1 = getPieceBBox(piece1);
+  const bbox2 = getPieceBBox(piece2);
+  
+  // Quick bounding box check first
+  if (bbox1.maxx < bbox2.minx || bbox2.maxx < bbox1.minx ||
+      bbox1.maxy < bbox2.miny || bbox2.maxy < bbox1.miny) {
+    return false;
+  }
+  
+  // More detailed polygon intersection check
+  // Check if any vertex of piece1 is inside piece2
+  for (let pt of piece1.points) {
+    if (piece2.isInside(pt.x, pt.y)) return true;
+  }
+  
+  // Check if any vertex of piece2 is inside piece1
+  for (let pt of piece2.points) {
+    if (piece1.isInside(pt.x, pt.y)) return true;
+  }
+  
+  return false;
+}
+
+// Arrange pieces in rows at the bottom of the canvas (simplified)
+function arrangePiecesInRow() {
+  const startY = canvas.height - 120; // Position from bottom
+  const startX = 10; // Start position from left
+  const spacing = 15; // Spacing between pieces
+  const rowSpacing = 80; // Spacing between rows
+  const maxWidth = canvas.width - 20; // Maximum width for pieces
+  
+  let currentX = startX;
+  let currentY = startY;
+  let maxHeightInRow = 0;
+  
+  for (let piece of pieces) {
+    const bbox = getPieceBBox(piece);
+    const pieceWidth = bbox.width;
+    const pieceHeight = bbox.height;
+    
+    // Check if piece fits in current row
+    if (currentX + pieceWidth > maxWidth && currentX > startX) {
+      // Move to next row
+      currentX = startX;
+      currentY -= (maxHeightInRow + rowSpacing);
+      maxHeightInRow = 0;
+    }
+    
+    // Calculate center positions
+    const centerX = (bbox.minx + bbox.maxx) / 2;
+    const centerY = (bbox.miny + bbox.maxy) / 2;
+    
+    // Calculate target position
+    const targetCenterX = currentX + pieceWidth / 2;
+    const targetCenterY = currentY;
+    
+    // Move piece to target position (forced move, bypassing collision detection)
+    const dx = targetCenterX - centerX;
+    const dy = targetCenterY - centerY;
+    for (let p of piece.points) { 
+      p.x += dx; 
+      p.y += dy; 
+    }
+    
+    // Update positions for next piece
+    currentX += pieceWidth + spacing;
+    maxHeightInRow = Math.max(maxHeightInRow, pieceHeight);
+  }
 }
 
 function normalizeLevel(level) {

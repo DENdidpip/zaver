@@ -12,191 +12,66 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Tangram">
   
-  <link href = "styles/index.css" rel = "stylesheet">
-  <style>
-    @keyframes winPulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-    
-    #message {
-      text-align: center;
-
-      transition: all 0.3s ease;
-    }
-    
-    #board {
-      transition: border 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .level-panel {
-      background: #f8f9fa;
-      border: 2px solid #e9ecef;
-      border-radius: 10px;
-      padding: 15px;
-      margin: 15px 0;
-      text-align: center;
-    }
-    
-    .level-btn {
-      background: #3498db;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      margin: 5px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: all 0.2s ease;
-    }
-    
-    .level-btn:hover {
-      background: #2980b9;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-    
-    .level-btn.active {
-      background: #e74c3c;
-      font-weight: bold;
-    }
-    
-    .level-btn:disabled {
-      background: #bdc3c7;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-    
-    .nav-btn {
-      background: #27ae60;
-      color: white;
-      border: none;
-      padding: 8px 15px;
-      margin: 0 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: all 0.2s ease;
-    }
-    
-    .nav-btn:hover:not(:disabled) {
-      background: #219a52;
-      transform: translateY(-2px);
-    }
-    
-    .nav-btn:disabled {
-      background: #95a5a6;
-      cursor: not-allowed;
-      transform: none;
-    }
-    
-    .menu-btn:hover {
-      background: #8e44ad !important;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(155, 89, 182, 0.3);
-    }
-  </style>
+  <link href="styles/index.css" rel="stylesheet">
+  <link href="styles/tangram.css" rel="stylesheet">
 </head>
 <body>
 
-<div style="text-align: center; margin-bottom: 15px;">
-  <a href="menu.html" class="menu-btn" style="background: #9b59b6; color: white; text-decoration: none; padding: 10px 20px; border-radius: 25px; font-size: 14px; display: inline-block; transition: all 0.3s ease;">
+<div class="top-menu">
+  <a href="menu.html" class="menu-btn">
     Hlavné menu
   </a>
-</div>
+</div> 
 
 <h1>Tangram</h1>
 
 <!-- Панель выбора уровней -->
 <div class="level-panel">
-  <h3 style="margin-top: 0; color: #2c3e50;">Výber úrovne</h3>
+  <h3 class="level-title">Výber úrovne</h3>
   <div id="levelButtons">
     <!-- Кнопки уровней будут добавлены динамически -->
   </div>
-  <div style="margin-top: 10px;">
-    <button id="prevLevel" onclick="previousLevel()" class="nav-btn">← Predchádzajúca</button>
-    <span style="font-weight: bold; margin: 0 15px; font-size: 18px;">
+  <div class="level-nav">
+    <button id="prevLevel" class="nav-btn">← Predchádzajúca</button>
+    <span class="level-heading">
       Úroveň <span id="currentLevelNumber">1</span>: <span id="currentLevelName">Square</span>
     </span>
-    <button id="nextLevel" onclick="nextLevel()" class="nav-btn">Nasledujúca →</button>
+    <button id="nextLevel" class="nav-btn">Nasledujúca →</button>
   </div>
 </div>
 
 <canvas id="board" width="600" height="700"></canvas>
 
-<div style="text-align: center; margin: 10px 0;">
-  <div style="display: inline-block; background: #f8f9fa; border: 2px solid #e9ecef; border-radius: 10px; padding: 10px; margin: 0 10px;">
-    <span style="font-weight: bold; color: #2c3e50;">Aktuálny čas: </span>
-    <span id="currentTime" style="font-size: 18px; font-weight: bold; color: #e74c3c;">00:00</span>
+<div class="time-row">
+  <div class="time-box">
+    <span class="time-label">Aktuálny čas: </span>
+    <span id="currentTime" class="time-value">00:00</span>
   </div>
-  <div style="display: inline-block; background: #f8f9fa; border: 2px solid #e9ecef; border-radius: 10px; padding: 10px; margin: 0 10px;">
-    <span style="font-weight: bold; color: #2c3e50;">Najlepší čas: </span>
-    <span id="bestTime" style="font-size: 18px; font-weight: bold; color: #27ae60;">--:--</span>
+  <div class="time-box">
+    <span class="time-label">Najlepší čas: </span>
+    <span id="bestTime" class="time-value best">--:--</span>
   </div>
-  <button onclick="resetTimer()" style="padding: 8px 15px; margin-left: 10px; font-size: 14px; background: #f39c12; color: white; border: none; border-radius: 5px; cursor: pointer;">🔄 Reštart</button>
-</div>
+  <button id="resetTimerBtn" class="reset-btn">🔄 Reštart</button>
+</div> 
 
-<p id="message" style="font-weight:bold"></p>
+<p id="message" class="message"></p>
 
 <p>
-  <span id="workerStatus" style="margin-left:12px;font-weight:bold">Worker: —</span>
+  <span id="workerStatus" class="worker-status">Worker: —</span>
 </p>
-<p id="testResults" style="white-space:pre-wrap;font-family:monospace;margin-top:8px;"></p>
+<p id="testResults" class="test-results"></p>
 
-<p style="color:#555">Presúvanie: podržte a ťahajte. Klik pravým tlačidlom: otočiť o 45°. Dvojité kliknutie: otočiť o 90°.</p>
+<p class="instructions">Presúvanie: podržte a ťahajte. Klik pravým tlačidlom: otočiť o 45°. Dvojité kliknutie: otočiť o 90°.</p>
 
-<div style="margin: 10px 0; text-align: center;">
-  <label for="tolerance" style="margin-right: 10px;">Tolerancia pre víťazstvo (pixelov):</label>
-  <input type="number" id="tolerance" value="1000" min="0" max="5000" step="100" style="width: 80px; padding: 5px; margin-right: 10px;">
-  <button onclick="checkWinCondition()" style="padding: 10px 20px; font-size: 16px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">🔍 Skontrolovať víťazstvo</button>
-</div>
+<div class="tolerance-row">
+  <label for="tolerance">Tolerancia pre víťazstvo (pixelov):</label>
+  <input type="number" id="tolerance" value="1000" min="0" max="5000" step="100">
+  <button id="checkWinBtn" class="check-btn">🔍 Skontrolovať víťazstvo</button>
+</div> 
 
 <script src = "src/index.js"></script>
 
-<script>
-// Регистрация Service Worker для PWA
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(registration => {
-        console.log('SW зарегистрирован успешно:', registration.scope);
-        
-        // Проверка обновлений
-        registration.addEventListener('updatefound', () => {
-          const newWorker = registration.installing;
-          newWorker.addEventListener('statechange', () => {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              // Новая версия доступна
-              if (confirm('Dostupná je nová verzia hry. Aktualizovať?')) {
-                newWorker.postMessage({ type: 'SKIP_WAITING' });
-                window.location.reload();
-              }
-            }
-          });
-        });
-      })
-      .catch(error => {
-        console.log('SW регистрация не удалась:', error);
-      });
-  });
-}
-
-// Обработка установки PWA
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  
-  // Показать кнопку установки (опционально)
-  console.log('PWA готова к установке');
-});
-
-window.addEventListener('appinstalled', (evt) => {
-  console.log('PWA установлена успешно');
-});
-</script>
+<script src="src/pwa.js" defer></script>
 
 </body>
 </html>

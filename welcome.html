@@ -4,52 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Танграм - Главная</title>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-    }
-    
-    .welcome-container {
-      text-align: center;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      padding: 40px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-    }
-    
-    h1 {
-      font-size: 3em;
-      margin-bottom: 20px;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    }
-    
-    .start-btn {
-      background: #2ecc71;
-      color: white;
-      text-decoration: none;
-      padding: 15px 30px;
-      border-radius: 25px;
-      font-size: 1.2em;
-      display: inline-block;
-      margin-top: 20px;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(46,204,113,0.3);
-    }
-    
-    .start-btn:hover {
-      background: #27ae60;
-      transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(46,204,113,0.4);
-    }
-  </style>
+  <link href="styles/welcome.css" rel="stylesheet">
 </head>
 <body>
 
@@ -61,17 +16,10 @@
     Войти в игру
   </a>
   
-  <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.8;">
-    Собирайте различные фигуры из семи геометрических элементов
-  </p>
+  <p class="welcome-note">Собирайте различные фигуры из семи геометрических элементов</p>
 </div>
 
-<script>
-// Автоматическое перенаправление через 3 секунды (опционально)
-// setTimeout(() => {
-//   window.location.href = 'menu.html';
-// }, 3000);
-</script>
+
 
 </body>
 </html>

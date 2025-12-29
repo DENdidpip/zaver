@@ -4,8 +4,15 @@ const urlsToCache = [
   './',
   './index.html',
   './menu.html',
+  './offline.html',
   './src/index.js',
+  './src/pwa.js',
+  './src/menu.js',
   './styles/index.css',
+  './styles/tangram.css',
+  './styles/menu.css',
+  './styles/welcome.css',
+  './styles/offline.css',
   './json/levels.json',
   './manifest.json'
 ];

@@ -820,7 +820,8 @@ canvas.addEventListener('dblclick', e => {
 
 // Level management functions
 function loadAllLevels() {
-  fetch('json/levels.json')
+  // cache-busting to ensure the latest levels.json is fetched (bypass SW cache)
+  fetch('json/levels.json?t=' + Date.now())
     .then(r => r.json())
     .then(data => {
       allLevels = data.levels;
@@ -1073,6 +1074,16 @@ function handleUrlParams() {
 function initializeGame() {
   // Сначала обрабатываем URL параметры
   handleUrlParams();
+
+  // Attach UI listeners (move inline onclicks to JS)
+  const prevBtn = document.getElementById('prevLevel');
+  const nextBtn = document.getElementById('nextLevel');
+  const resetBtn = document.getElementById('resetTimerBtn');
+  const checkBtn = document.getElementById('checkWinBtn');
+  if (prevBtn) prevBtn.addEventListener('click', previousLevel);
+  if (nextBtn) nextBtn.addEventListener('click', nextLevel);
+  if (resetBtn) resetBtn.addEventListener('click', resetTimer);
+  if (checkBtn) checkBtn.addEventListener('click', checkWinCondition);
   
   // Затем загружаем уровни
   loadAllLevels();

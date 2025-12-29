@@ -1,21 +1,19 @@
 {
     "levels": [
-        {
-        "levelId": 1,
-        "name": "Square",
-        "silhouette": [ {"x":200,"y":200},{"x":356,"y":200},{"x":356,"y":356},{"x":200,"y":356} ],
-        "pieces": [
-            {"type":"triangle","points":[{"x":50,"y":50},{"x":150,"y":50},{"x":50,"y":150}],"color":"#e74c3c"},
-            {"type":"triangle","points":[{"x":150,"y":50},{"x":150,"y":150},{"x":50,"y":150}],"color":"#3498db"},
-            {"type":"triangle","points":[{"x":50,"y":150},{"x":150,"y":150},{"x":100,"y":200}],"color":"#2ecc71"},
-            {"type":"triangle","points":[{"x":150,"y":150},{"x":200,"y":150},{"x":150,"y":200}],"color":"#f39c12"},
-            {"type":"triangle","points":[{"x":150,"y":150},{"x":200,"y":150},{"x":150,"y":200}],"color":"#f39c12"},
-            {"type":"triangle","points":[{"x":150,"y":150},{"x":200,"y":150},{"x":150,"y":200}],"color":"#f39c12"},
-            {"type":"square","points":[{"x":100,"y":100},{"x":150,"y":100},{"x":150,"y":150},{"x":100,"y":150}],"color":"#9b59b6"},
-            {"type":"parallelogram","points":[{"x":50,"y":50},{"x":100,"y":50},{"x":150,"y":100},{"x":100,"y":100}],"color":"#ff7ab6"},
-            {"type":"triangle","points":[{"x":150,"y":50},{"x":200,"y":50},{"x":150,"y":100}],"color":"#1abc9c"}
-        ]
+      {
+            "levelId": 1,
+            "name": "Mini Tangram",
+            "hint": "Соберите квадрат из четырёх фигур: два треугольника, квадрат и параллелограмм.",
+            "silhouette": [ {"x":220,"y":200},{"x":380,"y":200},{"x":380,"y":360},{"x":220,"y":360} ],
+            "pieces": [
+               {"type":"triangle","points":[{"x":154,"y":42},{"x":154,"y":154},{"x":42,"y":154}],"color":"#e74c3c"},
+               {"type":"triangle","points":[{"x":154,"y":42},{"x":154,"y":154},{"x":42,"y":154}],"color":"#3498db"},
+               {"type":"triangle","points":[{"x":154,"y":42},{"x":154,"y":154},{"x":42,"y":154}],"color":"#f1c40f"},
+               {"type":"triangle","points":[{"x":154,"y":42},{"x":154,"y":154},{"x":42,"y":154}],"color":"#2ecc71"}
+
+            ]
         },
+        
 {
   "levelId": 2,
   "name": "Triangle",
@@ -52,6 +50,38 @@
             {"type":"parallelogram","points":[{"x":50,"y":200},{"x":100,"y":150},{"x":200,"y":150},{"x":150,"y":200}],"color":"#ff7ab6"},
             {"type":"triangle","points":[{"x":250,"y":50},{"x":300,"y":100},{"x":250,"y":150}],"color":"#1abc9c"}
         ]
+        },
+        {
+        "levelId": 4,
+        "name": "Square",
+        "silhouette": [ {"x":200,"y":200},{"x":356,"y":200},{"x":356,"y":356},{"x":200,"y":356} ],
+        "pieces": [
+            {"type":"triangle","points":[{"x":50,"y":50},{"x":150,"y":50},{"x":50,"y":150}],"color":"#e74c3c"},
+            {"type":"triangle","points":[{"x":150,"y":50},{"x":150,"y":150},{"x":50,"y":150}],"color":"#3498db"},
+            {"type":"triangle","points":[{"x":50,"y":150},{"x":150,"y":150},{"x":100,"y":200}],"color":"#2ecc71"},
+            {"type":"triangle","points":[{"x":150,"y":150},{"x":200,"y":150},{"x":150,"y":200}],"color":"#f39c12"},
+            {"type":"triangle","points":[{"x":150,"y":150},{"x":200,"y":150},{"x":150,"y":200}],"color":"#f39c12"},
+            {"type":"triangle","points":[{"x":150,"y":150},{"x":200,"y":150},{"x":150,"y":200}],"color":"#f39c12"},
+            {"type":"square","points":[{"x":100,"y":100},{"x":150,"y":100},{"x":150,"y":150},{"x":100,"y":150}],"color":"#9b59b6"},
+            {"type":"parallelogram","points":[{"x":50,"y":50},{"x":100,"y":50},{"x":150,"y":100},{"x":100,"y":100}],"color":"#ff7ab6"},
+            {"type":"triangle","points":[{"x":150,"y":50},{"x":200,"y":50},{"x":150,"y":100}],"color":"#1abc9c"}
+        ]
+        },
+        {
+          "levelId": 5,
+          "name": "Diamond",
+          "hint": "Соберите ромб из шести фигур: 4 треугольника, ромб и квадрат.",
+          "silhouette": [ {"x":300,"y":156},{"x":404,"y":260},{"x":300,"y":364},{"x":196,"y":260} ],
+          "pieces": [
+             
+             {"type":"square","points":[{"x":220,"y":300},{"x":320,"y":300},{"x":320,"y":400},{"x":220,"y":400}],"color":"#f1c40f"},
+             {"type":"square","points":[{"x":105,"y":105},{"x":145,"y":105},{"x":145,"y":145},{"x":105,"y":145}],"color":"#9b59b6"},
+             {"type":"square","points":[{"x":220,"y":300},{"x":320,"y":300},{"x":320,"y":345},{"x":220,"y":345}],"color":"#f1c40f"},
+             {"type":"triangle","points":[{"x":200,"y":200},{"x":300,"y":200},{"x":300,"y":240}],"color":"#3498db"},
+             {"type":"triangle","points":[{"x":200,"y":200},{"x":100,"y":200},{"x":200,"y":240}],"color":"#3498db"}
+            
+          ],
+          "solutionNote": "Orange large triangle top-left, blue bottom-left, green small top-right, purple diamond on right, red small near center, yellow square center-bottom."
         }
     ]
 }

@@ -14,6 +14,104 @@ let _worker = null;
 let _workerRequestId = 0;
 const _pendingWorker = new Map();
 let _workerBusy = false;
+
+// Level management
+let currentLevelId = 1;
+let allLevels = [];
+let originalLevel = null;
+let levelAttemptStarted = false; // Флаг для отслеживания начала попытки
+
+// Timer management
+let levelStartTime = null;
+let timerInterval = null;
+let bestTimes = {}; // Store best times for each level
+
+// Load best times from localStorage
+function loadBestTimes() {
+  const saved = localStorage.getItem('tangramBestTimes');
+  if (saved) {
+    try {
+      bestTimes = JSON.parse(saved);
+    } catch (e) {
+      bestTimes = {};
+    }
+  }
+}
+
+// Save best times to localStorage
+function saveBestTimes() {
+  localStorage.setItem('tangramBestTimes', JSON.stringify(bestTimes));
+}
+
+// Format time in MM:SS format
+function formatTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+}
+
+// Start timer for current level
+function startTimer() {
+  levelStartTime = Date.now();
+  if (timerInterval) clearInterval(timerInterval);
+  
+  timerInterval = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - levelStartTime) / 1000);
+    document.getElementById('currentTime').textContent = formatTime(elapsed);
+  }, 1000);
+  
+  // Update best time display
+  const levelKey = `level_${currentLevelId}`;
+  const bestTimeEl = document.getElementById('bestTime');
+  if (bestTimes[levelKey]) {
+    bestTimeEl.textContent = formatTime(bestTimes[levelKey]);
+  } else {
+    bestTimeEl.textContent = '--:--';
+  }
+}
+
+// Stop timer and check for new best time
+function stopTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  
+  if (levelStartTime) {
+    const elapsed = Math.floor((Date.now() - levelStartTime) / 1000);
+    const levelKey = `level_${currentLevelId}`;
+    
+    // Check if this is a new best time
+    if (!bestTimes[levelKey] || elapsed < bestTimes[levelKey]) {
+      bestTimes[levelKey] = elapsed;
+      saveBestTimes();
+      document.getElementById('bestTime').textContent = formatTime(elapsed);
+      return true; // New record
+    }
+  }
+  return false; // No new record
+}
+
+// Reset timer for current level
+function resetTimer() {
+  levelAttemptStarted = false; // Сброс флага для нового рестарта
+  startTimer();
+  document.getElementById('message').textContent = `Úroveň ${currentLevelId}: Časovač reštartovaný`;
+}
+
+// Initialize timer system
+loadBestTimes();
+
+// Function to increment attempt count (called on first interaction)
+function incrementAttemptCount() {
+  if (!levelAttemptStarted) {
+    levelAttemptStarted = true;
+    const levelKey = `level_${currentLevelId}`;
+    let attempts = JSON.parse(localStorage.getItem('tangramAttempts') || '{}');
+    attempts[levelKey] = (attempts[levelKey] || 0) + 1;
+    localStorage.setItem('tangramAttempts', JSON.stringify(attempts));
+  }
+}
 function updateWorkerStatus() {
   const el = document.getElementById('workerStatus');
   if (!el) return;
@@ -74,8 +172,6 @@ function workerSnapAsync(options = {}) {
   });
 }
 
-let originalLevel = null;
-
 function deepClone(obj) { return JSON.parse(JSON.stringify(obj)); }
 
 // Check for win condition
@@ -99,7 +195,7 @@ function checkWinCondition() {
   }
   
   if (!allPiecesInSilhouette) {
-    document.getElementById('message').textContent = '⚠️ Некоторые фигуры находятся вне силуэта';
+    document.getElementById('message').textContent = '⚠️ Niektoré figúry sú mimo siluety';
     return false;
   }
   
@@ -120,18 +216,18 @@ function checkWinCondition() {
   // Показываем прогресс с учетом допуска
   if (result.uncovered >= tolerance) {
     const remaining = result.uncovered - tolerance + 1;
-    document.getElementById('message').textContent = `Осталось заполнить: ${remaining} пикселей (допуск: ${tolerance})`;
+    document.getElementById('message').textContent = `Zostáva vyplniť: ${remaining} pixelov (tolerancia: ${tolerance})`;
   } else if (result.overlap >= tolerance) {
     const excess = result.overlap - tolerance + 1;
-    document.getElementById('message').textContent = `⚠️ Слишком много перекрытий: ${excess} лишних пикселей (допуск: ${tolerance})`;
+    document.getElementById('message').textContent = `⚠️ Príliš veľa prekrytí: ${excess} nadbytočných pixelov (tolerancia: ${tolerance})`;
   } else {
     // Если мы здесь, значит одно условие выполнено, а другое почти
-    let message = 'Почти готово! ';
+    let message = 'Takmer hotovo! ';
     if (result.uncovered > 0) {
-      message += `Незакрашено: ${result.uncovered} пикселей (норма). `;
+      message += `Nevyplnené: ${result.uncovered} pixelov (norma). `;
     }
     if (result.overlap > 0) {
-      message += `Перекрытий: ${result.overlap} пикселей (норма).`;
+      message += `Prekrytí: ${result.overlap} pixelov (norma).`;
     }
     document.getElementById('message').textContent = message;
   }
@@ -141,8 +237,23 @@ function checkWinCondition() {
 
 // Show win message with animation
 function showWinMessage() {
+  // Stop timer and check for new record
+  const isNewRecord = stopTimer();
+  
+  // Mark level as completed (но не увеличиваем счётчик попыток - это уже сделано в loadLevel)
+  const levelKey = `level_${currentLevelId}`;
+  let completedLevels = JSON.parse(localStorage.getItem('tangramCompleted') || '{}');
+  completedLevels[levelKey] = true;
+  localStorage.setItem('tangramCompleted', JSON.stringify(completedLevels));
+  
   const messageEl = document.getElementById('message');
-  messageEl.innerHTML = '🎉 <span style="color: #2ecc71; font-size: 24px; font-weight: bold;">ПОБЕДА!</span> 🎉<br><span style="color: #333;">Вы успешно собрали танграм!</span>';
+  let message = '🎉 <span style="color: #2ecc71; font-size: 24px; font-weight: bold;">VÍŤAZSTVO!</span> 🎉<br><span style="color: #333;">Úspešne ste zostavili tangram!</span>';
+  
+  if (isNewRecord) {
+    message += '<br><span style="color: #f39c12; font-weight: bold;">🏆 NOVÝ REKORD! 🏆</span>';
+  }
+  
+  messageEl.innerHTML = message;
   
   // Add celebration animation
   messageEl.style.animation = 'none';
@@ -187,7 +298,7 @@ function updateBadPoints() {
     }
   }
   if (badPoints.length) {
-    document.getElementById('message').textContent = `⚠️ ${badPoints.length} точек вне силуэта — покажу их красными.`;
+    document.getElementById('message').textContent = `⚠️ ${badPoints.length} bodov mimo siluety — ukážem ich červeno.`;
   } else {
     document.getElementById('message').textContent = '';
   }
@@ -529,6 +640,10 @@ function checkVictory() {
 
 canvas.addEventListener('pointerdown', e => {
   _stateVersion++;
+  
+  // Увеличиваем счётчик попыток при первом взаимодействии
+  incrementAttemptCount();
+  
   const rect = canvas.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
@@ -614,16 +729,16 @@ canvas.addEventListener('pointerup', e => {
       coverageOverlay = sr.overlay ? bufferToCanvas(sr.width, sr.height, sr.overlay) : null;
       workerCheckAsync(true).then(sr2 => {
         if (sr2.uncovered === 0 && sr2.overlap === 0) {
-          document.getElementById('message').textContent = '🎉 Победа! Фигуры покрывают силуэт без перекрытий.';
+          document.getElementById('message').textContent = '🎉 Víťazstvo! Figúry pokrývajú siluetu bez prekrytí.';
           badPoints = [];
           coverageOverlay = null;
-          setTimeout(() => alert('🎉 Победа! Все фигуры правильно размещены.'), 100);
+          setTimeout(() => alert('🎉 Víťazstvo! Všetky figúry sú správne umiestnené.'), 100);
         } else {
           const parts = [];
-          if (sr2.uncovered > 0) parts.push(`${sr2.uncovered} незакрытых пикселей`);
-          if (sr2.overlap > 0) parts.push(`${sr2.overlap} пикселей перекрытия`);
-          if (badPoints.length) parts.push(`${badPoints.length} вершин/середин вне силуэта`);
-          document.getElementById('message').textContent = `⚠️ ${parts.join(', ')} — покажу на холсте.`;
+          if (sr2.uncovered > 0) parts.push(`${sr2.uncovered} nezakrytých pixelov`);
+          if (sr2.overlap > 0) parts.push(`${sr2.overlap} pixelov prekrytia`);
+          if (badPoints.length) parts.push(`${badPoints.length} vrcholov/stredov mimo siluety`);
+          document.getElementById('message').textContent = `⚠️ ${parts.join(', ')} — ukážem na plátne.`;
         }
         drawAll();
       });
@@ -634,16 +749,16 @@ canvas.addEventListener('pointerup', e => {
     updateBadPoints();
     const resStrict = computeCoverageAndOverlap(true);
     if (resStrict.uncovered === 0 && resStrict.overlap === 0) {
-      document.getElementById('message').textContent = '🎉 Победа! Фигуры покрывают силуэт без перекрытий.';
+      document.getElementById('message').textContent = '🎉 Víťazstvo! Figúry pokrývajú siluetu bez prekrytí.';
       badPoints = [];
       coverageOverlay = null;
-      setTimeout(() => alert('🎉 Победа! Все фигуры правильно размещены.'), 100);
+      setTimeout(() => alert('🎉 Víťazstvo! Všetky figúry sú správne umiestnené.'), 100);
     } else {
       const parts = [];
-      if (resQuick.uncovered > 0) parts.push(`${resQuick.uncovered} незакрытых пикселей`);
-      if (resQuick.overlap > 0) parts.push(`${resQuick.overlap} пикселей перекрытия`);
-      if (badPoints.length) parts.push(`${badPoints.length} вершин/середин вне силуэта`);
-      document.getElementById('message').textContent = `⚠️ ${parts.join(', ')} — покажу на холсте.`;
+      if (resQuick.uncovered > 0) parts.push(`${resQuick.uncovered} nezakrytých pixelov`);
+      if (resQuick.overlap > 0) parts.push(`${resQuick.overlap} pixelov prekrytia`);
+      if (badPoints.length) parts.push(`${badPoints.length} vrcholov/stredov mimo siluety`);
+      document.getElementById('message').textContent = `⚠️ ${parts.join(', ')} — ukážem na plátne.`;
     }
     drawAll();
   }
@@ -701,47 +816,125 @@ canvas.addEventListener('dblclick', e => {
   }
 });
 
-// fallback level (used if fetch fails, e.g. opened via file://)
-const fallbackLevel = {
-  "levelId": 1,
-  "name": "Square",
-  "silhouette": [ {"x":200,"y":200},{"x":400,"y":200},{"x":400,"y":400},{"x":200,"y":400} ],
-  "pieces": [
-    {"type":"triangle","points":[{"x":50,"y":50},{"x":150,"y":50},{"x":50,"y":150}],"color":"#e74c3c"},
-    {"type":"triangle","points":[{"x":150,"y":50},{"x":150,"y":150},{"x":50,"y":150}],"color":"#3498db"},
-    {"type":"triangle","points":[{"x":50,"y":150},{"x":150,"y":150},{"x":100,"y":200}],"color":"#2ecc71"},
-    {"type":"triangle","points":[{"x":150,"y":150},{"x":200,"y":150},{"x":150,"y":200}],"color":"#f39c12"},
-    {"type":"triangle","points":[{"x":150,"y":150},{"x":200,"y":150},{"x":150,"y":200}],"color":"#f39c12"},
-    {"type":"triangle","points":[{"x":150,"y":150},{"x":200,"y":150},{"x":150,"y":200}],"color":"#f39c12"},
-    {"type":"square","points":[{"x":100,"y":100},{"x":150,"y":100},{"x":150,"y":150},{"x":100,"y":150}],"color":"#9b59b6"},
-    {"type":"parallelogram","points":[{"x":50,"y":50},{"x":100,"y":50},{"x":150,"y":100},{"x":100,"y":100}],"color":"#ff7ab6"},
-    {"type":"triangle","points":[{"x":150,"y":50},{"x":200,"y":50},{"x":150,"y":100}],"color":"#1abc9c"}
-  ]
-};
 
-fetch('level1.json').then(r => r.json()).then(level => {
-  silhouette = level.silhouette;
-  originalLevel = deepClone(level);
-  normalizeLevel(level);
-  pieces = level.pieces.map(p => new Piece(p.points, p.color));
-  arrangePiecesInRow();
-  drawAll();
-}).catch(err => {
-  console.warn('Failed to load level1.json, using fallback level:', err);
+
+// Level management functions
+function loadAllLevels() {
+  fetch('json/levels.json')
+    .then(r => r.json())
+    .then(data => {
+      allLevels = data.levels;
+      createLevelButtons();
+      loadLevel(currentLevelId);
+    })
+    .catch(err => {
+      console.warn('Failed to load levels.json, using fallback level:', err);
+      loadFallbackLevel();
+    });
+}
+
+function createLevelButtons() {
+  const levelButtonsContainer = document.getElementById('levelButtons');
+  if (!levelButtonsContainer) return;
+  
+  levelButtonsContainer.innerHTML = '';
+  
+  allLevels.forEach(level => {
+    const button = document.createElement('button');
+    button.className = 'level-btn';
+    button.textContent = `${level.levelId}. ${level.name}`;
+    button.onclick = () => loadLevel(level.levelId);
+    button.id = `level-btn-${level.levelId}`;
+    levelButtonsContainer.appendChild(button);
+  });
+  
+  updateLevelButtons();
+}
+
+function loadLevel(levelId) {
+  currentLevelId = levelId;
+  levelAttemptStarted = false; // Сброс флага при загрузке нового уровня
+  
+  const level = allLevels.find(l => l.levelId === levelId);
+  
+  if (level) {
+    silhouette = level.silhouette;
+    originalLevel = deepClone(level);
+    // normalizeLevel(level);  // Отключено - мешает точным размерам
+    pieces = level.pieces.map(p => new Piece(p.points, p.color));
+    arrangePiecesInRow();
+    drawAll();
+    
+    // Update UI
+    updateLevelDisplay(level);
+    updateLevelButtons();
+    
+    // Start timer for the new level
+    startTimer();
+  } else {
+    console.error(`Level ${levelId} not found`);
+    loadFallbackLevel();
+  }
+}
+
+function loadFallbackLevel() {
+  levelAttemptStarted = false; // Сброс флага при загрузке fallback уровня
+  
   silhouette = fallbackLevel.silhouette;
   originalLevel = deepClone(fallbackLevel);
-  normalizeLevel(fallbackLevel);
+  // normalizeLevel(fallbackLevel);  // Отключено - мешает точным размерам
   pieces = fallbackLevel.pieces.map(p => new Piece(p.points, p.color));
-  // Inform the user about file:// fetch restriction and fallback
-  const msgEl = document.getElementById('message');
-  msgEl.textContent = '⚠️ Используется встроенный уровень (fallback).';
-  if (location && location.protocol === 'file:') {
-    msgEl.textContent += ' (Файлы открыты через file:// — браузер блокирует fetch. Для загрузки уровня запустите локальный HTTP-сервер, например: `python -m http.server` и откройте http://localhost:8000/)';
-  }
   arrangePiecesInRow();
   drawAll();
-});
+  
+  const msgEl = document.getElementById('message');
+  msgEl.textContent = '⚠️ Používa sa vstavaná úroveň (fallback).';
+  if (location && location.protocol === 'file:') {
+    msgEl.textContent += ' (Súbory otvorené cez file:// — prehliadač blokuje fetch. Pre načítanie úrovne spustite lokálny HTTP server, napríklad: `python -m http.server` a otvorte http://localhost:8000/)';
+  }
+  
+  // Start timer for fallback level
+  startTimer();
+}
 
+function updateLevelDisplay(level) {
+  const levelNumberEl = document.getElementById('currentLevelNumber');
+  const levelNameEl = document.getElementById('currentLevelName');
+  const messageEl = document.getElementById('message');
+  
+  if (levelNumberEl) levelNumberEl.textContent = level.levelId;
+  if (levelNameEl) levelNameEl.textContent = level.name;
+  if (messageEl) messageEl.textContent = `Úroveň ${level.levelId}: ${level.name}`;
+}
+
+function updateLevelButtons() {
+  // Update navigation buttons
+  const prevBtn = document.getElementById('prevLevel');
+  const nextBtn = document.getElementById('nextLevel');
+  
+  if (prevBtn) prevBtn.disabled = currentLevelId <= 1;
+  if (nextBtn) nextBtn.disabled = currentLevelId >= allLevels.length;
+  
+  // Update level selection buttons
+  allLevels.forEach(level => {
+    const btn = document.getElementById(`level-btn-${level.levelId}`);
+    if (btn) {
+      btn.classList.toggle('active', level.levelId === currentLevelId);
+    }
+  });
+}
+
+function nextLevel() {
+  if (currentLevelId < allLevels.length) {
+    loadLevel(currentLevelId + 1);
+  }
+}
+
+function previousLevel() {
+  if (currentLevelId > 1) {
+    loadLevel(currentLevelId - 1);
+  }
+}
 
 // Convert an overlay ArrayBuffer into a canvas for drawing
 function bufferToCanvas(width, height, buf) {
@@ -859,4 +1052,35 @@ function normalizeLevel(level) {
       pt.y = sil.miny + offsetY + (pt.y - piecesBox.miny) * scale;
     }
   }
+}
+
+// Обработка URL параметров для автоматической загрузки уровня
+function handleUrlParams() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const levelParam = urlParams.get('level');
+  
+  if (levelParam) {
+    const levelId = parseInt(levelParam);
+    if (levelId && levelId > 0) {
+      // Устанавливаем текущий уровень из URL
+      currentLevelId = levelId;
+      console.log(`Загрузка уровня ${levelId} из URL параметра`);
+    }
+  }
+}
+
+// Инициализация игры при загрузке страницы
+function initializeGame() {
+  // Сначала обрабатываем URL параметры
+  handleUrlParams();
+  
+  // Затем загружаем уровни
+  loadAllLevels();
+}
+
+// Запускаем инициализацию когда DOM готов
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeGame);
+} else {
+  initializeGame();
 }

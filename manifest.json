@@ -1,0 +1,35 @@
+{
+  "name": "Tangram - Hlavolam",
+  "short_name": "Tangram",
+  "description": "Klasický čínsky hlavolam tangram s rôznymi úrovňami obtiažnosti",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3498db",
+  "orientation": "any",
+  "scope": "./",
+  "lang": "sk",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect fill='%233498db' width='192' height='192' rx='20'/%3E%3Cpath fill='white' d='M96 32L160 96L96 160L32 96z'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect fill='%233498db' width='512' height='512' rx='50'/%3E%3Cpath fill='white' d='M256 80L430 256L256 432L82 256z'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["games", "entertainment", "education"],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 600'%3E%3Crect fill='%23f8f9fa' width='400' height='600'/%3E%3Ctext x='200' y='300' text-anchor='middle' font-size='20' fill='%23333'%3ETangram - Hra%3C/text%3E%3C/svg%3E",
+      "sizes": "400x600",
+      "type": "image/svg+xml",
+      "form_factor": "narrow"
+    }
+  ]
+}

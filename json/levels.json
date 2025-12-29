@@ -3,15 +3,54 @@
         {
         "levelId": 1,
         "name": "Square",
-        "silhouette": [ {"x":200,"y":200},{"x":400,"y":200},{"x":400,"y":400},{"x":200,"y":400} ],
+        "silhouette": [ {"x":200,"y":200},{"x":356,"y":200},{"x":356,"y":356},{"x":200,"y":356} ],
         "pieces": [
             {"type":"triangle","points":[{"x":50,"y":50},{"x":150,"y":50},{"x":50,"y":150}],"color":"#e74c3c"},
             {"type":"triangle","points":[{"x":150,"y":50},{"x":150,"y":150},{"x":50,"y":150}],"color":"#3498db"},
             {"type":"triangle","points":[{"x":50,"y":150},{"x":150,"y":150},{"x":100,"y":200}],"color":"#2ecc71"},
             {"type":"triangle","points":[{"x":150,"y":150},{"x":200,"y":150},{"x":150,"y":200}],"color":"#f39c12"},
+            {"type":"triangle","points":[{"x":150,"y":150},{"x":200,"y":150},{"x":150,"y":200}],"color":"#f39c12"},
+            {"type":"triangle","points":[{"x":150,"y":150},{"x":200,"y":150},{"x":150,"y":200}],"color":"#f39c12"},
             {"type":"square","points":[{"x":100,"y":100},{"x":150,"y":100},{"x":150,"y":150},{"x":100,"y":150}],"color":"#9b59b6"},
             {"type":"parallelogram","points":[{"x":50,"y":50},{"x":100,"y":50},{"x":150,"y":100},{"x":100,"y":100}],"color":"#ff7ab6"},
             {"type":"triangle","points":[{"x":150,"y":50},{"x":200,"y":50},{"x":150,"y":100}],"color":"#1abc9c"}
+        ]
+        },
+{
+  "levelId": 2,
+  "name": "Triangle",
+  "silhouette": [
+    {"x":300,"y":200},
+    {"x":191.5,"y":310},
+    {"x":408.5,"y":310}
+  ],
+  "pieces": [
+    {"type":"triangle","points":[{"x":50,"y":50},{"x":150,"y":50},{"x":100,"y":100}],"color":"#e74c3c"},
+    {"type":"triangle","points":[{"x":180,"y":50},{"x":280,"y":50},{"x":230,"y":100}],"color":"#3498db"},
+    {"type":"triangle","points":[{"x":50,"y":120},{"x":100,"y":120},{"x":75,"y":145}],"color":"#2ecc71"},
+    {"type":"triangle","points":[{"x":120,"y":120},{"x":170,"y":120},{"x":145,"y":145}],"color":"#f39c12"},
+    {"type":"diamond","points":[{"x":225,"y":120},{"x":250,"y":145},{"x":225,"y":170},{"x":200,"y":145}],"color":"#9b59b6"},
+    {"type":"triangle","points":[{"x":50,"y":180},{"x":100,"y":180},{"x":50,"y":230}],"color":"#ff7ab6"},
+    {"type":"parallelogram","points":[{"x":118,"y":180},{"x":172,"y":180},{"x":148.37,"y":212},{"x":94.37,"y":212}],"color":"#1abc9c"}
+  ]
+},
+
+{
+    "levelId": 3,
+    "name": "Trapezoid",
+    "silhouette": [
+        {"x":150,"y":240},
+        
+        {"x":302,"y":79},
+        {"x":450,"y":240}
+    ],
+        "pieces": [
+            {"type":"triangle","points":[{"x":50,"y":50},{"x":150,"y":50},{"x":50,"y":150}],"color":"#e74c3c"},
+            {"type":"triangle","points":[{"x":150,"y":50},{"x":250,"y":50},{"x":250,"y":150}],"color":"#3498db"},
+            {"type":"triangle","points":[{"x":50,"y":150},{"x":150,"y":150},{"x":100,"y":200}],"color":"#2ecc71"},
+            {"type":"triangle","points":[{"x":150,"y":150},{"x":250,"y":150},{"x":200,"y":200}],"color":"#f39c12"},
+            {"type":"parallelogram","points":[{"x":50,"y":200},{"x":100,"y":150},{"x":200,"y":150},{"x":150,"y":200}],"color":"#ff7ab6"},
+            {"type":"triangle","points":[{"x":250,"y":50},{"x":300,"y":100},{"x":250,"y":150}],"color":"#1abc9c"}
         ]
         }
     ]

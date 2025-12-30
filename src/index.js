@@ -725,9 +725,12 @@ canvas.addEventListener('pointerup', e => {
 
   if (_worker) {
     // do NOT request a worker snap that moves pieces; instead only run coverage checks
+    const requestVersion = myVersion;
     workerCheckAsync(false).then(sr => {
+      if (requestVersion !== _stateVersion) return; // stale result
       coverageOverlay = sr.overlay ? bufferToCanvas(sr.width, sr.height, sr.overlay) : null;
       workerCheckAsync(true).then(sr2 => {
+        if (requestVersion !== _stateVersion) return; // stale result
         if (sr2.uncovered === 0 && sr2.overlap === 0) {
           document.getElementById('message').textContent = '🎉 Víťazstvo! Figúry pokrývajú siluetu bez prekrytí.';
           badPoints = [];
@@ -782,7 +785,9 @@ canvas.addEventListener('contextmenu', e => {
       // }
       
       // async coverage check via worker when available
+      const ctxVer = _stateVersion;
       workerCheckAsync(false).then(sr => {
+        if (ctxVer !== _stateVersion) return; // stale
         coverageOverlay = sr.overlay ? bufferToCanvas(sr.width, sr.height, sr.overlay) : null;
         drawAll();
       });
@@ -807,7 +812,9 @@ canvas.addEventListener('dblclick', e => {
       //   return;
       // }
       
+      const dblVer = _stateVersion;
       workerCheckAsync(false).then(sr => {
+        if (dblVer !== _stateVersion) return; // stale
         coverageOverlay = sr.overlay ? bufferToCanvas(sr.width, sr.height, sr.overlay) : null;
         drawAll();
       });
@@ -844,7 +851,7 @@ function createLevelButtons() {
     const button = document.createElement('button');
     button.className = 'level-btn';
     button.textContent = `${level.levelId}. ${level.name}`;
-    button.onclick = () => loadLevel(level.levelId);
+    button.onclick = () => { badPoints = []; coverageOverlay = null; document.getElementById('message').textContent = ''; if (canvas) { canvas.style.border = ''; canvas.style.boxShadow = ''; } drawAll(); loadLevel(level.levelId); };
     button.id = `level-btn-${level.levelId}`;
     levelButtonsContainer.appendChild(button);
   });
@@ -863,6 +870,12 @@ function loadLevel(levelId) {
     originalLevel = deepClone(level);
     // normalizeLevel(level);  // Отключено - мешает точным размерам
     pieces = level.pieces.map(p => new Piece(p.points, p.color));
+
+    // Clear any overlays / debug markers from previous level so they don't persist
+    badPoints = [];
+    coverageOverlay = null;
+    if (canvas) { canvas.style.border = ''; canvas.style.boxShadow = ''; }
+
     arrangePiecesInRow();
     drawAll();
     
@@ -885,6 +898,12 @@ function loadFallbackLevel() {
   originalLevel = deepClone(fallbackLevel);
   // normalizeLevel(fallbackLevel);  // Отключено - мешает точным размерам
   pieces = fallbackLevel.pieces.map(p => new Piece(p.points, p.color));
+
+  // Clear any overlays / debug markers from previous level so they don't persist
+  badPoints = [];
+  coverageOverlay = null;
+  if (canvas) { canvas.style.border = ''; canvas.style.boxShadow = ''; }
+
   arrangePiecesInRow();
   drawAll();
   
@@ -927,12 +946,26 @@ function updateLevelButtons() {
 
 function nextLevel() {
   if (currentLevelId < allLevels.length) {
+    // Clear any leftover overlays/markers immediately when user requests a new level
+    badPoints = [];
+    coverageOverlay = null;
+    document.getElementById('message').textContent = '';
+    if (canvas) { canvas.style.border = ''; canvas.style.boxShadow = ''; }
+    drawAll();
+
     loadLevel(currentLevelId + 1);
   }
 }
 
 function previousLevel() {
   if (currentLevelId > 1) {
+    // Clear overlays/markers before switching level
+    badPoints = [];
+    coverageOverlay = null;
+    document.getElementById('message').textContent = '';
+    if (canvas) { canvas.style.border = ''; canvas.style.boxShadow = ''; }
+    drawAll();
+
     loadLevel(currentLevelId - 1);
   }
 }

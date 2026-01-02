@@ -179,8 +179,7 @@ function checkWinCondition() {
   console.log('Проверяем условие выигрыша...'); // Отладка
   
   // Получаем допуск из поля ввода
-  const toleranceInput = document.getElementById('tolerance');
-  const tolerance = toleranceInput ? parseInt(toleranceInput.value) || 1000 : 1000;
+  const tolerance = 3000;
   
   // Сначала проверяем, что все фигуры находятся внутри или на границе силуэта
   let allPiecesInSilhouette = true;

@@ -92,11 +92,29 @@ function stopTimer() {
   return false; // No new record
 }
 
-// Reset timer for current level
+// Reset timer and pieces positions for current level
 function resetTimer() {
   levelAttemptStarted = false; // Сброс флага для нового рестарта
+  
+  // Restore pieces to their original positions
+  if (originalLevel && originalLevel.pieces) {
+    pieces = originalLevel.pieces.map(p => new Piece(p.points, p.color));
+    arrangePiecesInRow();
+  }
+  
+  // Clear any overlays and debug markers
+  badPoints = [];
+  coverageOverlay = null;
+  if (canvas) { 
+    canvas.style.border = ''; 
+    canvas.style.boxShadow = ''; 
+  }
+  
+  // Redraw everything with reset positions
+  drawAll();
+  
   startTimer();
-  document.getElementById('message').textContent = `Úroveň ${currentLevelId}: Časovač reštartovaný`;
+  document.getElementById('message').textContent = `Úroveň ${currentLevelId}: Časovač a pozície figúrok reštartované`;
 }
 
 // Initialize timer system

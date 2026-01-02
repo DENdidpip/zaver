@@ -136,6 +136,37 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reset-btn:hover {
+  background: #e67e22;
+  transform: translateY(-2px);
+}
+
+.pause-btn {
+  padding: 8px 15px;
+  margin-left: 10px;
+  font-size: 14px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pause-btn:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+}
+
+.pause-btn.paused {
+  background: #27ae60;
+}
+
+.pause-btn.paused:hover {
+  background: #219a52;
 }
 
 .instructions {

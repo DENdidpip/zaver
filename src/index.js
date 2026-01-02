@@ -25,6 +25,9 @@ let levelAttemptStarted = false; // Флаг для отслеживания н�
 let levelStartTime = null;
 let timerInterval = null;
 let bestTimes = {}; // Store best times for each level
+let isPaused = false; // Track pause state
+let pausedTime = 0; // Store accumulated time when paused
+let pauseStartTime = null; // Store when pause started
 
 // Load best times from localStorage
 function loadBestTimes() {
@@ -53,11 +56,16 @@ function formatTime(seconds) {
 // Start timer for current level
 function startTimer() {
   levelStartTime = Date.now();
+  isPaused = false;
+  pausedTime = 0;
+  
   if (timerInterval) clearInterval(timerInterval);
   
   timerInterval = setInterval(() => {
-    const elapsed = Math.floor((Date.now() - levelStartTime) / 1000);
-    document.getElementById('currentTime').textContent = formatTime(elapsed);
+    if (!isPaused) {
+      const elapsed = Math.floor((Date.now() - levelStartTime - pausedTime) / 1000);
+      document.getElementById('currentTime').textContent = formatTime(elapsed);
+    }
   }, 1000);
   
   // Update best time display
@@ -70,6 +78,30 @@ function startTimer() {
   }
 }
 
+// Toggle pause state
+function togglePause() {
+  const pauseBtn = document.getElementById('pauseBtn');
+  
+  if (isPaused) {
+    // Resume game
+    isPaused = false;
+    const pauseEndTime = Date.now();
+    pausedTime += pauseEndTime - pauseStartTime;
+    pauseBtn.textContent = '⏸️ Pauza';
+    pauseBtn.classList.remove('paused');
+    canvas.style.pointerEvents = 'auto';
+    canvas.style.filter = 'none';
+  } else {
+    // Pause game
+    isPaused = true;
+    pauseStartTime = Date.now();
+    pauseBtn.textContent = '▶️ Pokračovať';
+    pauseBtn.classList.add('paused');
+    canvas.style.pointerEvents = 'none';
+    canvas.style.filter = 'blur(2px) grayscale(50%)';
+  }
+}
+
 // Stop timer and check for new best time
 function stopTimer() {
   if (timerInterval) {
@@ -78,7 +110,7 @@ function stopTimer() {
   }
   
   if (levelStartTime) {
-    const elapsed = Math.floor((Date.now() - levelStartTime) / 1000);
+    const elapsed = Math.floor((Date.now() - levelStartTime - pausedTime) / 1000);
     const levelKey = `level_${currentLevelId}`;
     
     // Check if this is a new best time
@@ -95,6 +127,18 @@ function stopTimer() {
 // Reset timer and pieces positions for current level
 function resetTimer() {
   levelAttemptStarted = false; // Сброс флага для нового рестарта
+  
+  // Reset pause state
+  isPaused = false;
+  pausedTime = 0;
+  pauseStartTime = null;
+  const pauseBtn = document.getElementById('pauseBtn');
+  if (pauseBtn) {
+    pauseBtn.textContent = '⏸️ Pauza';
+    pauseBtn.classList.remove('paused');
+  }
+  canvas.style.pointerEvents = 'auto';
+  canvas.style.filter = 'none';
   
   // Restore pieces to their original positions
   if (originalLevel && originalLevel.pieces) {
@@ -656,6 +700,8 @@ function checkVictory() {
 }
 
 canvas.addEventListener('pointerdown', e => {
+  if (isPaused) return; // Don't allow interaction when paused
+  
   _stateVersion++;
   
   // Увеличиваем счётчик попыток при первом взаимодействии
@@ -703,7 +749,8 @@ window.addEventListener('pointerup', e => {
 });
 
 canvas.addEventListener('pointermove', e => {
-  if (!selected || !selected.dragging) return;
+  if (isPaused || !selected || !selected.dragging) return;
+  
   const rect = canvas.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
@@ -785,6 +832,8 @@ canvas.addEventListener('pointerup', e => {
 });
 
 canvas.addEventListener('contextmenu', e => {
+  if (isPaused) return; // Don't allow interaction when paused
+  
   e.preventDefault();
   const rect = canvas.getBoundingClientRect();
   const x = e.clientX - rect.left;
@@ -814,6 +863,8 @@ canvas.addEventListener('contextmenu', e => {
 });
 
 canvas.addEventListener('dblclick', e => {
+  if (isPaused) return; // Don't allow interaction when paused
+  
   const rect = canvas.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
@@ -1129,10 +1180,12 @@ function initializeGame() {
   const prevBtn = document.getElementById('prevLevel');
   const nextBtn = document.getElementById('nextLevel');
   const resetBtn = document.getElementById('resetTimerBtn');
+  const pauseBtn = document.getElementById('pauseBtn');
   const checkBtn = document.getElementById('checkWinBtn');
   if (prevBtn) prevBtn.addEventListener('click', previousLevel);
   if (nextBtn) nextBtn.addEventListener('click', nextLevel);
   if (resetBtn) resetBtn.addEventListener('click', resetTimer);
+  if (pauseBtn) pauseBtn.addEventListener('click', togglePause);
   if (checkBtn) checkBtn.addEventListener('click', checkWinCondition);
   
   // Затем загружаем уровни

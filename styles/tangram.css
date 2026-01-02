@@ -1,195 +1,345 @@
+/* Анимации */
 @keyframes winPulse {
   0% { transform: scale(1); }
   50% { transform: scale(1.05); }
   100% { transform: scale(1); }
 }
 
-#message {
-  text-align: center;
-  transition: all 0.3s ease;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-#board {
-  transition: border 0.3s ease, box-shadow 0.3s ease;
-}
-
-.level-panel {
-  background: #f8f9fa;
-  border: 2px solid #e9ecef;
-  border-radius: 10px;
-  padding: 15px;
-  margin: 15px 0;
-  text-align: center;
-}
-
-.level-title {
-  margin-top: 0;
-  color: #2c3e50;
-}
-
-.level-btn {
-  background: #3498db;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  margin: 5px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: all 0.2s ease;
-}
-
-.level-btn:hover {
-  background: #2980b9;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-.level-btn.active {
-  background: #e74c3c;
-  font-weight: bold;
-}
-
-.level-btn:disabled {
-  background: #bdc3c7;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.nav-btn {
-  background: #27ae60;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  margin: 0 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: all 0.2s ease;
-}
-
-.nav-btn:hover:not(:disabled) {
-  background: #219a52;
-  transform: translateY(-2px);
-}
-
-.nav-btn:disabled {
-  background: #95a5a6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.menu-btn {
-  background: #9b59b6;
-  color: white;
-  text-decoration: none;
-  padding: 10px 20px;
-  border-radius: 25px;
-  font-size: 14px;
-  display: inline-block;
-  transition: all 0.3s ease;
-  border: none;
-}
-
-.menu-btn:hover {
-  background: #8e44ad !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(155, 89, 182, 0.3);
-}
-
+/* Верхнее меню */
 .top-menu {
   text-align: center;
   margin-bottom: 15px;
+  animation: fadeIn 0.6s ease;
+}
+
+.menu-btn {
+  background: linear-gradient(135deg, #4056A1, #C5CBE3);
+  color: white;
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-block;
+  transition: all 0.3s ease;
+  border: none;
+  box-shadow: 0 4px 15px rgba(64, 86, 161, 0.3);
+}
+
+.menu-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(64, 86, 161, 0.4);
+  background: linear-gradient(135deg, #364B8C, #B4BCD9);
+}
+
+/* Панель уровней */
+.level-panel {
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(64, 86, 161, 0.2);
+  border-radius: 16px;
+  padding: 20px 15px;
+  margin: 15px auto;
+  text-align: center;
+  max-width: 600px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  backdrop-filter: blur(10px);
+  animation: fadeIn 0.8s ease 0.2s both;
+}
+
+.level-title {
+  margin: 0 0 15px 0;
+  color: #4056A1;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+#levelButtons {
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.level-btn {
+  background: linear-gradient(135deg, #D79922, #F13C20);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 50px;
+  box-shadow: 0 3px 10px rgba(215, 153, 34, 0.3);
+}
+
+.level-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(215, 153, 34, 0.4);
+  background: linear-gradient(135deg, #C8861F, #D63318);
+}
+
+.level-btn.active {
+  background: linear-gradient(135deg, #4056A1, #C5CBE3);
+  box-shadow: 0 5px 15px rgba(64, 86, 161, 0.4);
+  transform: translateY(-1px);
+}
+.level-btn:disabled {
+  background: #C5CBE3;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  opacity: 0.6;
+}
+
+/* Навигация уровней */
+.level-nav {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.nav-btn {
+  background: linear-gradient(135deg, #D79922, #EFE2BA);
+  color: #333;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(215, 153, 34, 0.2);
+}
+
+.nav-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(215, 153, 34, 0.3);
+  background: linear-gradient(135deg, #C8861F, #E5D5A8);
+}
+
+.nav-btn:disabled {
+  background: #C5CBE3;
+  cursor: not-allowed;
+  transform: none;
+  opacity: 0.5;
+}
+
+.level-heading {
+  font-weight: 600;
+  font-size: 16px;
+  color: #4056A1;
+  margin: 0 10px;
+  text-align: center;
+}
+
+/* Панель времени */
+.time-row {
+  text-align: center;
+  margin: 20px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-width: 600px;
+  animation: fadeIn 1s ease 0.4s both;
 }
 
 .time-box {
-  display: inline-block;
-  background: #f8f9fa;
-  border: 2px solid #e9ecef;
-  border-radius: 10px;
-  padding: 10px;
-  margin: 0 10px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(64, 86, 161, 0.2);
+  border-radius: 12px;
+  padding: 12px 16px;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 .time-label {
-  font-weight: bold;
-  color: #2c3e50;
+  font-weight: 600;
+  color: #4056A1;
+  font-size: 14px;
 }
 
 .time-value {
   font-size: 18px;
-  font-weight: bold;
-  color: #e74c3c;
+  font-weight: 700;
+  color: #F13C20;
+  display: block;
 }
 
 .time-value.best {
-  color: #27ae60;
+  color: #D79922;
 }
 
-.reset-btn {
-  padding: 8px 15px;
-  margin-left: 10px;
+/* Кнопки управления */
+.pause-btn, .reset-btn {
+  padding: 10px 16px;
   font-size: 14px;
-  background: #f39c12;
-  color: white;
+  font-weight: 600;
   border: none;
-  border-radius: 5px;
+  border-radius: 20px;
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.reset-btn:hover {
-  background: #e67e22;
-  transform: translateY(-2px);
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
 }
 
 .pause-btn {
-  padding: 8px 15px;
-  margin-left: 10px;
-  font-size: 14px;
-  background: #e74c3c;
+  background: linear-gradient(135deg, #F13C20, #D79922);
   color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.2s ease;
 }
 
 .pause-btn:hover {
-  background: #c0392b;
   transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(241, 60, 32, 0.4);
 }
 
 .pause-btn.paused {
-  background: #27ae60;
+  background: linear-gradient(135deg, #D79922, #EFE2BA);
+  color: #333;
 }
 
-.pause-btn.paused:hover {
-  background: #219a52;
+.reset-btn {
+  background: linear-gradient(135deg, #C5CBE3, #4056A1);
+  color: white;
+}
+
+.reset-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(64, 86, 161, 0.4);
+}
+
+/* Сообщения и инструкции */
+#message {
+  text-align: center;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  margin: 15px 0;
+  font-size: 16px;
+  color: #4056A1;
 }
 
 .instructions {
-  color: #555;
+  color: #666;
+  text-align: center;
+  font-size: 14px;
+  margin: 15px auto;
+  max-width: 500px;
+  padding: 0 15px;
+  line-height: 1.5;
+}
+
+.worker-status {
+  margin-left: 12px;
+  font-weight: 600;
+  color: #4056A1;
+}
+
+/* Кнопка проверки */
+.tolerance-row {
+  margin: 20px 0;
+  text-align: center;
+  animation: fadeIn 1.2s ease 0.6s both;
 }
 
 .check-btn {
-  padding: 10px 20px;
+  padding: 12px 24px;
   font-size: 16px;
-  background: #3498db;
+  font-weight: 600;
+  background: linear-gradient(135deg, #4056A1, #C5CBE3);
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 25px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(64, 86, 161, 0.3);
 }
 
-#testResults { white-space: pre-wrap; font-family: monospace; margin-top:8px; }
-.worker-status { margin-left: 12px; font-weight: bold; }
-.message { font-weight: bold; }
+.check-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(64, 86, 161, 0.4);
+}
 
-.level-nav { margin-top: 10px; }
-.level-heading { font-weight: bold; margin: 0 15px; font-size: 18px; }
-.time-row { text-align: center; margin: 10px 0; }
-.tolerance-row { margin: 10px 0; text-align: center; }
-.tolerance-row label { margin-right: 10px; }
-.tolerance-row input { width: 80px; padding: 5px; margin-right: 10px; }
+/* Дополнительные стили */
+#testResults {
+  white-space: pre-wrap;
+  font-family: 'Courier New', monospace;
+  margin-top: 15px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid rgba(64, 86, 161, 0.2);
+  font-size: 12px;
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+  .level-panel {
+    margin: 10px 5px;
+    padding: 15px 10px;
+  }
+  
+  .time-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .time-box {
+    margin-bottom: 10px;
+  }
+  
+  .level-nav {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .level-heading {
+    order: -1;
+    margin-bottom: 10px;
+  }
+  
+  .nav-btn {
+    padding: 12px 20px;
+    font-size: 16px;
+  }
+  
+  .instructions {
+    font-size: 13px;
+    padding: 0 20px;
+  }
+  
+  #levelButtons {
+    gap: 6px;
+  }
+  
+  .level-btn {
+    min-width: 45px;
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .level-panel {
+    border-radius: 12px;
+    margin: 10px 2px;
+  }
+  
+  .time-box {
+    padding: 10px 12px;
+  }
+  
+  .pause-btn, .reset-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}

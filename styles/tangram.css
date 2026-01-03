@@ -409,3 +409,139 @@
     transition: transform 0.1s ease;
   }
 }
+
+/* Кнопка подсказки */
+.hint-section {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.hint-btn {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(46, 204, 113, 0.3);
+}
+
+.hint-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+  background: linear-gradient(135deg, #27ae60, #229954);
+}
+
+.hint-btn:active {
+  transform: translateY(0);
+}
+
+/* Модальное окно подсказки */
+.hint-modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.7);
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.3s ease;
+}
+
+.hint-modal-content {
+  background: white;
+  margin: 5% auto;
+  padding: 20px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.hint-close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.hint-close:hover,
+.hint-close:focus {
+  color: #F13C20;
+  background: rgba(241, 60, 32, 0.1);
+  text-decoration: none;
+}
+
+.hint-title {
+  color: #4056A1;
+  text-align: center;
+  margin: 0 0 20px 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.hint-image-container {
+  text-align: center;
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  border: 2px solid #EFE2BA;
+}
+
+#hintImage {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+  .hint-modal-content {
+    width: 95%;
+    margin: 10% auto;
+    padding: 15px;
+  }
+  
+  .hint-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  
+  .hint-btn:hover {
+    transform: none;
+  }
+  
+  .hint-btn:active {
+    transform: scale(0.95);
+  }
+}

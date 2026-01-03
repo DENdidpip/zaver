@@ -1283,6 +1283,59 @@ function handleUrlParams() {
   }
 }
 
+// Функции для работы с подсказками
+function showHint() {
+  const currentLevel = allLevels.find(l => l.levelId === currentLevelId);
+  if (currentLevel && currentLevel.hint) {
+    const modal = document.getElementById('hintModal');
+    const hintImage = document.getElementById('hintImage');
+    
+    hintImage.src = currentLevel.hint;
+    hintImage.alt = `Nápoveda k úrovni ${currentLevel.levelId}: ${currentLevel.name}`;
+    
+    modal.style.display = 'block';
+    
+    // Приостановить игру при показе подсказки
+    if (!isPaused && levelStartTime) {
+      togglePause();
+    }
+  }
+}
+
+function hideHint() {
+  const modal = document.getElementById('hintModal');
+  modal.style.display = 'none';
+}
+
+function setupHintModal() {
+  const modal = document.getElementById('hintModal');
+  const closeBtn = document.getElementsByClassName('hint-close')[0];
+  
+  // Закрытие по клику на крестик
+  if (closeBtn) {
+    closeBtn.addEventListener('click', hideHint);
+  }
+  
+  // Закрытие по клику вне модального окна
+  if (modal) {
+    modal.addEventListener('click', function(event) {
+      if (event.target === modal) {
+        hideHint();
+      }
+    });
+  }
+  
+  // Закрытие по нажатию Escape
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+      const modal = document.getElementById('hintModal');
+      if (modal && modal.style.display === 'block') {
+        hideHint();
+      }
+    }
+  });
+}
+
 // Инициализация игры при загрузке страницы
 function initializeGame() {
   // Сначала обрабатываем URL параметры
@@ -1294,11 +1347,16 @@ function initializeGame() {
   const resetBtn = document.getElementById('resetTimerBtn');
   const pauseBtn = document.getElementById('pauseBtn');
   const checkBtn = document.getElementById('checkWinBtn');
+  const hintBtn = document.getElementById('hintBtn');
   if (prevBtn) prevBtn.addEventListener('click', previousLevel);
   if (nextBtn) nextBtn.addEventListener('click', nextLevel);
   if (resetBtn) resetBtn.addEventListener('click', resetTimer);
   if (pauseBtn) pauseBtn.addEventListener('click', togglePause);
   if (checkBtn) checkBtn.addEventListener('click', checkWinCondition);
+  if (hintBtn) hintBtn.addEventListener('click', showHint);
+  
+  // Обработчики для модального окна подсказки
+  setupHintModal();
   
   // Затем загружаем уровни
   loadAllLevels();

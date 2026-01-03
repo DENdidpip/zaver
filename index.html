@@ -41,6 +41,9 @@
     </span>
     <button id="nextLevel" class="nav-btn">Nasledujúca →</button>
   </div>
+  <div class="hint-section">
+    <button id="hintBtn" class="hint-btn">💡 Ukázať nápovedu</button>
+  </div>
 </div>
 
 <canvas id="board" width="600" height="700"></canvas>
@@ -66,6 +69,17 @@
 <div class="tolerance-row">
   <button id="checkWinBtn" class="check-btn">🔍 Skontrolovať víťazstvo</button>
 </div> 
+
+<!-- Модальное окно для подсказки -->
+<div id="hintModal" class="hint-modal">
+  <div class="hint-modal-content">
+    <span class="hint-close">&times;</span>
+    <h3 class="hint-title">Nápoveda</h3>
+    <div class="hint-image-container">
+      <img id="hintImage" src="" alt="Nápoveda k úrovni">
+    </div>
+  </div>
+</div>
 
 <script src = "src/index.js"></script>
 

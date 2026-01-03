@@ -158,3 +158,28 @@ body {
     padding: 12px;
   }
 }
+
+/* Стили для видео контейнера */
+.video-container {
+  margin: 30px 0 20px 0;
+  text-align: center;
+  padding: 20px;
+}
+
+.video-container video {
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  border: 2px solid rgba(64, 86, 161, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .video-container {
+    padding: 15px 10px;
+  }
+  
+  .video-container video {
+    width: 100% !important;
+    max-width: none !important;
+  }
+}

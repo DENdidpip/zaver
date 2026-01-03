@@ -2,7 +2,8 @@
     "levels": [
       {
             "levelId": 1,
-            "name": "Mini Tangram",
+            "name": "Eazy peasy",
+            "hint": "hint/Eazy_peasy.png",
             "silhouette": [ {"x":220,"y":200},{"x":380,"y":200},{"x":380,"y":360},{"x":220,"y":360} ],
             "pieces": [
                {"type":"triangle","points":[{"x":154,"y":42},{"x":154,"y":154},{"x":42,"y":154}],"color":"#e74c3c"},
@@ -11,27 +12,10 @@
                {"type":"triangle","points":[{"x":154,"y":42},{"x":154,"y":154},{"x":42,"y":154}],"color":"#2ecc71"}
             ]
         },
-{
-  "levelId": 2,
-  "name": "Triangle",
-  "silhouette": [
-    {"x":300,"y":200},
-    {"x":191.5,"y":310},
-    {"x":408.5,"y":310}
-  ],
-  "pieces": [
-    {"type":"triangle","points":[{"x":50,"y":50},{"x":150,"y":50},{"x":100,"y":100}],"color":"#e74c3c"},
-    {"type":"triangle","points":[{"x":180,"y":50},{"x":280,"y":50},{"x":230,"y":100}],"color":"#3498db"},
-    {"type":"triangle","points":[{"x":50,"y":120},{"x":100,"y":120},{"x":75,"y":145}],"color":"#2ecc71"},
-    {"type":"triangle","points":[{"x":120,"y":120},{"x":170,"y":120},{"x":145,"y":145}],"color":"#f39c12"},
-    {"type":"diamond","points":[{"x":225,"y":120},{"x":250,"y":145},{"x":225,"y":170},{"x":200,"y":145}],"color":"#9b59b6"},
-    {"type":"triangle","points":[{"x":50,"y":180},{"x":100,"y":180},{"x":50,"y":230}],"color":"#ff7ab6"},
-    {"type":"parallelogram","points":[{"x":118,"y":180},{"x":172,"y":180},{"x":148.37,"y":212},{"x":94.37,"y":212}],"color":"#1abc9c"}
-  ]
-},
-{
-    "levelId": 3,
-    "name": "Trapezoid",
+        {
+    "levelId": 2,
+    "name": "Triangle",
+    "hint": "hint/Triangle.png",
     "silhouette": [
         {"x":150,"y":240},        
         {"x":302,"y":79},
@@ -46,25 +30,10 @@
             {"type":"triangle","points":[{"x":250,"y":50},{"x":300,"y":100},{"x":250,"y":150}],"color":"#1abc9c"}
         ]
         },
-{
-        "levelId": 4,
-        "name": "Square",
-        "silhouette": [ {"x":200,"y":200},{"x":356,"y":200},{"x":356,"y":356},{"x":200,"y":356} ],
-        "pieces": [
-            {"type":"triangle","points":[{"x":50,"y":50},{"x":150,"y":50},{"x":50,"y":150}],"color":"#e74c3c"},
-            {"type":"triangle","points":[{"x":150,"y":50},{"x":150,"y":150},{"x":50,"y":150}],"color":"#3498db"},
-            {"type":"triangle","points":[{"x":50,"y":150},{"x":150,"y":150},{"x":100,"y":200}],"color":"#2ecc71"},
-            {"type":"triangle","points":[{"x":150,"y":150},{"x":200,"y":150},{"x":150,"y":200}],"color":"#f39c12"},
-            {"type":"triangle","points":[{"x":150,"y":150},{"x":200,"y":150},{"x":150,"y":200}],"color":"#1abc9c"},
-            {"type":"triangle","points":[{"x":150,"y":150},{"x":200,"y":150},{"x":150,"y":200}],"color":"#e67e22"},
-            {"type":"square","points":[{"x":100,"y":100},{"x":150,"y":100},{"x":150,"y":150},{"x":100,"y":150}],"color":"#9b59b6"},
-            {"type":"parallelogram","points":[{"x":50,"y":50},{"x":100,"y":50},{"x":150,"y":100},{"x":100,"y":100}],"color":"#ff7ab6"},
-            {"type":"triangle","points":[{"x":150,"y":50},{"x":200,"y":50},{"x":150,"y":100}],"color":"#16a085"}
-        ]
-        },
-{
-          "levelId": 5,
+        {
+          "levelId": 3,
           "name": "Diamond",
+          "hint": "hint/Diamond.png",
           "silhouette": [ {"x":300,"y":156},{"x":404,"y":260},{"x":300,"y":364},{"x":196,"y":260} ],
           "pieces": [
              {"type":"square","points":[{"x":220,"y":300},{"x":320,"y":300},{"x":320,"y":400},{"x":220,"y":400}],"color":"#3498db"},
@@ -74,9 +43,10 @@
              {"type":"triangle","points":[{"x":200,"y":200},{"x":100,"y":200},{"x":200,"y":240}],"color":"#2ecc71"}
           ]
         },
-{
-          "levelId": 6,
-          "name": "Rocket",
+        {
+          "levelId": 4,
+          "name": "Сrystal",
+          "hint": "hint/Crystal.png",
           "silhouette": [
             {"x":300,"y":100},
             {"x":360,"y":150},
@@ -94,9 +64,63 @@
             {"type":"triangle","points":[{"x":50,"y":50},{"x":170,"y":50},{"x":50,"y":135}],"color":"#e74c3c"},
             {"type":"triangle","points":[{"x":50,"y":50},{"x":170,"y":50},{"x":50,"y":135}],"color":"#3498db"}
           ]},
+          {
+          "levelId": 5,
+          "name": "Diamond 2.0",
+          "hint": "hint/Diamond2.0.png",
+          "silhouette": [ {"x":300,"y":156},{"x":404,"y":260},{"x":300,"y":364},{"x":196,"y":260} ],
+          "pieces": [
+            {"type":"triangle","points":[{"x":151.52,"y":47.04},{"x":151.52,"y":151.52},{"x":47.04,"y":151.52}],"color":"#e74c3c"},
+            {"type":"triangle","points":[{"x":50,"y":50},{"x":150,"y":50},{"x":100,"y":100}],"color":"#3498db"},
+            {"type":"triangle","points":[{"x":50,"y":50},{"x":150,"y":50},{"x":100,"y":100}],"color":"#2ecc71"},
+            {"type":"triangle","points":[{"x":50,"y":50},{"x":150,"y":50},{"x":100,"y":100}],"color":"#f1c40f"},
+            {"type":"parallelogram","points":[{"x":250,"y":350},{"x":300,"y":300},{"x":350,"y":350},{"x":300,"y":400}],"color":"#9b59b6"},
+            {"type":"triangle","points":[{"x":50,"y":50},{"x":150,"y":50},{"x":100,"y":100}],"color":"#1abc9c"}
+          ]
+        },
 {
-  "levelId": 7,
-  "name": "Tangram Square",
+  "levelId": 6,
+  "name": "Triangle 2.0",
+  "hint": "hint/Triangle2.0.png",
+  "silhouette": [
+    {"x":300,"y":200},
+    {"x":191.5,"y":310},
+    {"x":408.5,"y":310}
+  ],
+  "pieces": [
+    {"type":"triangle","points":[{"x":50,"y":50},{"x":150,"y":50},{"x":100,"y":100}],"color":"#e74c3c"},
+    {"type":"triangle","points":[{"x":180,"y":50},{"x":280,"y":50},{"x":230,"y":100}],"color":"#3498db"},
+    {"type":"triangle","points":[{"x":50,"y":120},{"x":100,"y":120},{"x":75,"y":145}],"color":"#2ecc71"},
+    {"type":"triangle","points":[{"x":120,"y":120},{"x":170,"y":120},{"x":145,"y":145}],"color":"#f39c12"},
+    {"type":"diamond","points":[{"x":225,"y":120},{"x":250,"y":145},{"x":225,"y":170},{"x":200,"y":145}],"color":"#9b59b6"},
+    {"type":"triangle","points":[{"x":50,"y":180},{"x":100,"y":180},{"x":50,"y":230}],"color":"#ff7ab6"},
+    {"type":"parallelogram","points":[{"x":118,"y":180},{"x":172,"y":180},{"x":148.37,"y":212},{"x":94.37,"y":212}],"color":"#1abc9c"}
+  ]
+},
+
+{
+        "levelId":7,
+        "name": "Square",
+        "hint": "hint/Square.png",
+        "silhouette": [ {"x":200,"y":200},{"x":356,"y":200},{"x":356,"y":356},{"x":200,"y":356} ],
+        "pieces": [
+            {"type":"triangle","points":[{"x":50,"y":50},{"x":150,"y":50},{"x":50,"y":150}],"color":"#e74c3c"},
+            {"type":"triangle","points":[{"x":150,"y":50},{"x":150,"y":150},{"x":50,"y":150}],"color":"#3498db"},
+            {"type":"triangle","points":[{"x":50,"y":150},{"x":150,"y":150},{"x":100,"y":200}],"color":"#2ecc71"},
+            {"type":"triangle","points":[{"x":150,"y":150},{"x":200,"y":150},{"x":150,"y":200}],"color":"#f39c12"},
+            {"type":"triangle","points":[{"x":150,"y":150},{"x":200,"y":150},{"x":150,"y":200}],"color":"#1abc9c"},
+            {"type":"triangle","points":[{"x":150,"y":150},{"x":200,"y":150},{"x":150,"y":200}],"color":"#e67e22"},
+            {"type":"square","points":[{"x":100,"y":100},{"x":150,"y":100},{"x":150,"y":150},{"x":100,"y":150}],"color":"#9b59b6"},
+            {"type":"parallelogram","points":[{"x":50,"y":50},{"x":100,"y":50},{"x":150,"y":100},{"x":100,"y":100}],"color":"#ff7ab6"},
+            {"type":"triangle","points":[{"x":150,"y":50},{"x":200,"y":50},{"x":150,"y":100}],"color":"#16a085"}
+        ]
+        },
+
+
+{
+  "levelId": 8,
+  "name": "Square 2.0",
+  "hint": "hint/Square2.0.png",
   "silhouette": [
     {"x":200,"y":200},
     {"x":400,"y":200},
@@ -115,19 +139,7 @@
     {"type":"square","points":[{"x":250,"y":300},{"x":350,"y":300},{"x":350,"y":400},{"x":250,"y":400}],"color":"#ff7ab6"},
     {"type":"parallelogram","points":[{"x":250,"y":350},{"x":300,"y":300},{"x":350,"y":350},{"x":300,"y":400}],"color":"#16a085"}
   ]
-},
-{
-          "levelId": 8,
-          "name": "Diamond2.0",
-          "silhouette": [ {"x":300,"y":156},{"x":404,"y":260},{"x":300,"y":364},{"x":196,"y":260} ],
-          "pieces": [
-            {"type":"triangle","points":[{"x":151.52,"y":47.04},{"x":151.52,"y":151.52},{"x":47.04,"y":151.52}],"color":"#e74c3c"},
-            {"type":"triangle","points":[{"x":50,"y":50},{"x":150,"y":50},{"x":100,"y":100}],"color":"#3498db"},
-            {"type":"triangle","points":[{"x":50,"y":50},{"x":150,"y":50},{"x":100,"y":100}],"color":"#2ecc71"},
-            {"type":"triangle","points":[{"x":50,"y":50},{"x":150,"y":50},{"x":100,"y":100}],"color":"#f1c40f"},
-            {"type":"parallelogram","points":[{"x":250,"y":350},{"x":300,"y":300},{"x":350,"y":350},{"x":300,"y":400}],"color":"#9b59b6"},
-            {"type":"triangle","points":[{"x":50,"y":50},{"x":150,"y":50},{"x":100,"y":100}],"color":"#1abc9c"}
-          ]
-        }
+}
+
     ]
 }

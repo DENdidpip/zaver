@@ -39,6 +39,11 @@ canvas {
   background: white;
   max-width: 100%;
   height: auto;
+  
+  /* Оптимизация для touch-устройств */
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 #testResults {
@@ -56,16 +61,37 @@ canvas {
 @media (max-width: 768px) {
   body {
     padding: 5px;
+    /* Предотвращаем случайные zoom'ы */
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
   }
   
   canvas {
     max-width: calc(100vw - 20px);
     margin: 10px auto;
+    /* Дополнительная оптимизация для touch */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
   }
   
   h1 {
     font-size: 1.8rem;
     margin: 5px 0 15px 0;
   }
+}
+
+@media (max-width: 480px) {
+  canvas {
+    max-width: calc(100vw - 10px);
+    margin: 5px auto;
+  }
+}
+
+/* Убираем выделение текста при перетаскивании только для canvas и кнопок */
+canvas, button {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
     

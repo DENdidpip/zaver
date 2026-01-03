@@ -702,6 +702,15 @@ function checkVictory() {
 canvas.addEventListener('pointerdown', e => {
   if (isPaused) return; // Don't allow interaction when paused
   
+  // Предотвращаем нежелательные действия браузера на touch-устройствах
+  e.preventDefault();
+  
+  // Очищаем предыдущий таймер долгого нажатия
+  if (longPressTimer) {
+    clearTimeout(longPressTimer);
+    longPressTimer = null;
+  }
+  
   _stateVersion++;
   
   // Увеличиваем счётчик попыток при первом взаимодействии
@@ -710,6 +719,7 @@ canvas.addEventListener('pointerdown', e => {
   const rect = canvas.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
+  
   for (let i = pieces.length - 1; i >= 0; i--) { // top-most first
     const p = pieces[i];
     if (p.isInside(x, y)) {
@@ -719,7 +729,35 @@ canvas.addEventListener('pointerdown', e => {
       pieces.splice(i,1);
       pieces.push(selected);
       lastPointer = {x, y};
-      try { canvas.setPointerCapture && canvas.setPointerCapture(e.pointerId); } catch (err) {}
+      
+      // Устанавливаем таймер для долгого нажатия (только на touch-устройствах)
+      if (e.pointerType === 'touch') {
+        longPressTarget = p;
+        longPressTimer = setTimeout(() => {
+          if (longPressTarget && selected && !selected.dragging) {
+            longPressTarget.rotate(45);
+            updateBadPoints();
+            drawAll();
+            
+            // Вибрация на мобильных устройствах
+            if (navigator.vibrate) {
+              navigator.vibrate(50);
+            }
+          }
+          longPressTarget = null;
+          longPressTimer = null;
+        }, 500);
+      }
+      
+      // Улучшенное захватывание указателя для всех типов устройств
+      try { 
+        if (canvas.setPointerCapture) {
+          canvas.setPointerCapture(e.pointerId);
+        }
+      } catch (err) {
+        console.log('PointerCapture not supported:', err);
+      }
+      
       updateBadPoints();
       drawAll();
       return;
@@ -728,6 +766,13 @@ canvas.addEventListener('pointerdown', e => {
 });
 
 function endDrag() {
+  // Отменяем долгое нажатие
+  if (longPressTimer) {
+    clearTimeout(longPressTimer);
+    longPressTimer = null;
+    longPressTarget = null;
+  }
+  
   if (selected) selected.dragging = false;
   selected = null;
   canvas.style.cursor = 'grab';
@@ -751,15 +796,36 @@ window.addEventListener('pointerup', e => {
 canvas.addEventListener('pointermove', e => {
   if (isPaused || !selected || !selected.dragging) return;
   
+  // Отменяем долгое нажатие при начале перетаскивания
+  if (longPressTimer) {
+    clearTimeout(longPressTimer);
+    longPressTimer = null;
+    longPressTarget = null;
+  }
+  
+  // Предотвращаем скролл и другие нежелательные действия
+  e.preventDefault();
+  
   const rect = canvas.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
+  
+  // Проверяем, что lastPointer существует
+  if (!lastPointer) {
+    lastPointer = {x, y};
+    return;
+  }
+  
   const dx = x - lastPointer.x;
   const dy = y - lastPointer.y;
-  selected.move(dx, dy);
-  lastPointer = {x, y};
-  updateBadPoints();
-  drawAll();
+  
+  // Небольшая оптимизация: обновляем только при значительном движении
+  if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
+    selected.move(dx, dy);
+    lastPointer = {x, y};
+    updateBadPoints();
+    drawAll();
+  }
   
   // Убираем автоматическую проверку выигрыша во время перетаскивания
   // checkWinCondition();
@@ -862,9 +928,14 @@ canvas.addEventListener('contextmenu', e => {
   }
 });
 
+// Переменные для долгого нажатия
+let longPressTimer = null;
+let longPressTarget = null;
+
 canvas.addEventListener('dblclick', e => {
   if (isPaused) return; // Don't allow interaction when paused
   
+  e.preventDefault(); // Предотвращаем зум на мобильных устройствах
   const rect = canvas.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
@@ -891,7 +962,48 @@ canvas.addEventListener('dblclick', e => {
   }
 });
 
-
+// Fallback для старых устройств без поддержки pointer events
+if (!window.PointerEvent) {
+  console.log('Adding touch event fallbacks');
+  
+  canvas.addEventListener('touchstart', e => {
+    if (isPaused) return;
+    e.preventDefault();
+    
+    const touch = e.touches[0];
+    const mouseEvent = new MouseEvent('pointerdown', {
+      clientX: touch.clientX,
+      clientY: touch.clientY,
+      button: 0,
+      bubbles: true
+    });
+    mouseEvent.pointerType = 'touch';
+    canvas.dispatchEvent(mouseEvent);
+  });
+  
+  canvas.addEventListener('touchmove', e => {
+    if (isPaused) return;
+    e.preventDefault();
+    
+    const touch = e.touches[0];
+    const mouseEvent = new MouseEvent('pointermove', {
+      clientX: touch.clientX,
+      clientY: touch.clientY,
+      bubbles: true
+    });
+    canvas.dispatchEvent(mouseEvent);
+  });
+  
+  canvas.addEventListener('touchend', e => {
+    if (isPaused) return;
+    e.preventDefault();
+    
+    const mouseEvent = new MouseEvent('pointerup', {
+      bubbles: true
+    });
+    window.dispatchEvent(mouseEvent);
+  });
+}
 
 // Level management functions
 function loadAllLevels() {
